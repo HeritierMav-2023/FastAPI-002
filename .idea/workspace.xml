@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="66cf1f2e-a2f5-47c2-853d-23e2683055ea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/FastAPI-002.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crud/tache.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db/database.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/tache.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schemas/tacheCreation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schemas/tacheMiseAJour.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="6" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.000301120199338" />
+      <entry key="S2" value="1.1533915429157495" />
+      <entry key="S5" value="1.7427270052136632" />
+      <entry key="S10" value="2.4256446522155306" />
+      <entry key="S30" value="3.459774510411072" />
+      <entry key="S60" value="4.168720144840957" />
+      <entry key="M2" value="4.845061566197884" />
+      <entry key="M5" value="5.81240649331741" />
+      <entry key="M10" value="9.949896775641806" />
+      <entry key="M15" value="16.77776141872036" />
+      <entry key="M30" value="39.18086824023451" />
+      <entry key="H1" value="71.2147931223196" />
+      <entry key="H2" value="102.72190691363008" />
+      <entry key="H4" value="126.23568137341493" />
+      <entry key="D1" value="151.98990677156132" />
+      <entry key="W1" value="157.1215867687005" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="6.088727917609851E-304" />
+      <entry key="MS500" value="2.2746014596260302E-61" />
+      <entry key="S2" value="6.906013723423552E-16" />
+      <entry key="S5" value="8.673583709799211E-7" />
+      <entry key="S10" value="9.993075503628595E-4" />
+      <entry key="S30" value="0.1389065691838627" />
+      <entry key="S60" value="0.5156825991925632" />
+      <entry key="M2" value="1.0098070819273388" />
+      <entry key="M5" value="1.521074253507765" />
+      <entry key="M10" value="1.8701192918949217" />
+      <entry key="M15" value="2.414220523629284" />
+      <entry key="M30" value="4.7446576869566135" />
+      <entry key="H1" value="8.327278692558773" />
+      <entry key="H2" value="11.66850538925551" />
+      <entry key="H4" value="14.011899325268585" />
+      <entry key="D1" value="16.448641246296486" />
+      <entry key="W1" value="16.919794929989873" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.8645372313078652" />
+      <entry key="MS500" value="0.9716003792824641" />
+      <entry key="S2" value="1.1441426124642682" />
+      <entry key="S5" value="1.7239511901047029" />
+      <entry key="S10" value="2.3994590469208577" />
+      <entry key="S30" value="3.557591978425574" />
+      <entry key="S60" value="4.633455220003231" />
+      <entry key="M2" value="5.811064295557762" />
+      <entry key="M5" value="7.308679721519293" />
+      <entry key="M10" value="11.804653246347318" />
+      <entry key="M15" value="19.17807406236041" />
+      <entry key="M30" value="43.910528828472025" />
+      <entry key="H1" value="79.52827076109499" />
+      <entry key="H2" value="114.38049102871909" />
+      <entry key="H4" value="140.24153492611387" />
+      <entry key="D1" value="168.43734851969816" />
+      <entry key="W1" value="174.0412049786751" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3L6T7DLyqS10r0SegbNOOnruytK" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-50341a9f1f9c-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.26222.68" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="66cf1f2e-a2f5-47c2-853d-23e2683055ea" name="Changes" comment="" />
+      <created>1792773347697</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1792773347697</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
