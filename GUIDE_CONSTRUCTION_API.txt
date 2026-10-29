@@ -1,0 +1,289 @@
+GUIDE PAS A PAS - API DE GESTION DES TACHES
+==========================================
+
+Ce guide explique comment l'API de ce projet est organisee et comment
+reprendre les memes etapes pour construire une autre API (par exemple une
+API de livres). Il decrit le projet tel qu'il est actuellement.
+
+
+1. COMPRENDRE LE CHEMIN D'UNE REQUETE
+-------------------------------------
+
+Une requete suit generalement ce chemin :
+
+Client (Swagger, navigateur ou application)
+    -> route FastAPI (main.py ou auth/routes.py)
+    -> schema Pydantic (validation des donnees)
+    -> fonction CRUD (regles et operations de base de donnees)
+    -> modele SQLAlchemy (table)
+    -> PostgreSQL
+    -> reponse JSON
+
+Fichiers principaux :
+
+- main.py : cree l'application et declare les routes des taches.
+- auth/routes.py : routes d'inscription, connexion, renouvellement et
+  deconnexion.
+- schemas/ : definit les donnees acceptees et renvoyees par l'API.
+- models/ : represente les tables de la base de donnees.
+- crud/ : regroupe les operations de lecture et d'ecriture en base.
+- db/database.py : configure SQLAlchemy et fournit une session de base.
+- alembic/ : contient les migrations de schema de base de donnees.
+- auth/hashing.py : hache et verifie les mots de passe.
+- auth/jwt.py : cree et decode les jetons JWT.
+- auth/depencies.py : retrouve l'utilisateur connecte a partir du cookie.
+
+
+2. PREPARER L'ENVIRONNEMENT
+---------------------------
+
+Dans PowerShell, depuis le dossier du projet :
+
+    py -m venv .venv
+    .venv\Scripts\Activate.ps1
+    python -m pip install -r requirements.txt
+
+La base PostgreSQL doit etre demarree et la base utilisee par le projet doit
+exister. La configuration se trouve dans db/database.py. Avant tout partage
+ou deploiement, placez l'adresse, le nom d'utilisateur et le mot de passe de
+la base dans des variables d'environnement, jamais dans le code source.
+
+Pour lancer l'API en developpement :
+
+    uvicorn main:app --reload
+
+Ouvrir ensuite :
+
+    http://127.0.0.1:8000/docs
+
+La page /docs permet d'essayer les routes et de voir les schemas attendus.
+
+
+3. CONCEVOIR LES DONNEES AVANT LES ROUTES
+-----------------------------------------
+
+Pour chaque fonctionnalite, repondre d'abord a ces questions :
+
+1) Quelles entites existent ? Ici : Utilisateur et Tache.
+2) Quels champs possede chaque entite ?
+3) Quels champs sont obligatoires, uniques ou lies a une autre entite ?
+4) Quelles actions le client pourra-t-il effectuer ?
+5) Qui a le droit d'effectuer chaque action ?
+
+Dans ce projet, un utilisateur peut avoir plusieurs taches. La relation est
+definie par Utilisateur.taches et Tache.proprio. La colonne
+tache.utilisateur_id relie une tache a son proprietaire.
+
+
+4. CREER UN MODELE SQLALCHEMY
+-----------------------------
+
+Un modele represente une table. Exemple simplifie inspire de
+models/tache.py :
+
+    class Tache(Base):
+        __tablename__ = "tache"
+        id = Column(Integer, primary_key=True, index=True)
+        title = Column(String, nullable=False)
+
+Les autres colonnes de la table sont ajoutees avec les types SQLAlchemy
+appropries (String, Integer, Date, Enum, etc.). Les contraintes comme
+nullable=False et unique=True doivent correspondre aux regles du projet.
+
+Pour une nouvelle ressource, creer un fichier dans models/, declarer sa
+table, puis definir les relations et cles etrangeres necessaires.
+
+
+5. CREER LES SCHEMAS PYDANTIC
+-----------------------------
+
+Un schema d'entree valide le JSON recu. Un schema de sortie controle le JSON
+renvoye. Les schemas sont distincts du modele de base de donnees.
+
+Exemple de schema d'entree de tache (schemas/tacheCreation.py) :
+
+    class TacheCreation(BaseModel):
+        titre: str = Field(min_length=1)
+        description: str = Field(min_length=1)
+        etat: Etat
+        dateEch: date
+
+Pydantic renvoie automatiquement une erreur 422 si le JSON ne respecte pas
+les types ou contraintes. Utiliser un schema de sortie avec
+ConfigDict(from_attributes=True) permet de construire la reponse depuis un
+objet SQLAlchemy.
+
+Conseil : distinguer les schemas de creation, de mise a jour et de sortie.
+Ne jamais renvoyer le mot de passe, meme s'il est hache.
+
+
+6. ECRIRE LES OPERATIONS CRUD
+-----------------------------
+
+CRUD signifie Create, Read, Update, Delete :
+
+- Create : construire l'objet, db.add(), db.commit(), db.refresh().
+- Read : db.query(Modele).filter(...).first() ou .all().
+- Update : retrouver l'objet, modifier les champs, puis commit().
+- Delete : retrouver l'objet, db.delete(), puis commit().
+
+Le fichier crud/tache.py contient ces operations pour les taches.
+Les fonctions CRUD recoivent une Session et ne definissent pas les URLs.
+Apres une erreur d'ecriture SQLAlchemy, appeler db.rollback() avant de
+continuer a utiliser la session, puis propager l'erreur.
+
+Ne pas oublier les regles d'acces : chaque lecture, modification ou
+suppression doit verifier que la ressource appartient a l'utilisateur, sauf
+si l'utilisateur a explicitement un role autorise.
+
+
+7. ECRIRE UNE ROUTE FASTAPI
+---------------------------
+
+Une route associe une methode HTTP et une URL a une fonction Python :
+
+    @app.get("/taches/")
+    def lister_taches(...):
+        ...
+
+Methodes habituelles :
+
+- POST : creer une ressource.
+- GET : lire une ressource ou une liste.
+- PUT/PATCH : modifier une ressource.
+- DELETE : supprimer une ressource.
+
+FastAPI injecte les dependances avec Depends(). Dans ce projet, get_db()
+fournit une session qui est fermee apres la requete. Un response_model
+documente et valide la forme de la reponse.
+
+Utiliser des codes HTTP coherents :
+
+- 200 : lecture ou action reussie.
+- 201 : ressource creee.
+- 401 : authentification manquante ou invalide.
+- 403 : utilisateur authentifie mais non autorise.
+- 404 : ressource absente.
+- 409 : conflit, par exemple pseudonyme deja utilise.
+- 422 : donnees d'entree invalides.
+
+
+8. AUTHENTIFICATION DE CE PROJET
+--------------------------------
+
+Inscription : POST /auth/register
+JSON :
+
+    {
+      "pseudonyme": "alice",
+      "email": "alice@example.com",
+      "motDePasse": "un-mot-de-passe"
+    }
+
+Le mot de passe est hache par auth/hashing.py avant l'enregistrement.
+L'API refuse un pseudonyme ou un e-mail deja utilise.
+
+Connexion : POST /auth/login
+JSON :
+
+    {
+      "pseudonyme": "alice",
+      "motDePasse": "un-mot-de-passe"
+    }
+
+En cas de succes, le serveur pose des cookies HttpOnly access_token et
+refresh_token. auth/depencies.py lit le cookie access_token et verifie le
+JWT avant de charger l'utilisateur. Les routes protegees utilisent cette
+dependance pour obtenir current_user.
+
+Deconnexion : POST /auth/logout supprime les cookies.
+
+Point a verifier pour le renouvellement : /auth/refresh demande actuellement
+un champ refresh_token dans le corps JSON, alors que /auth/login place le
+jeton dans un cookie et ne le renvoie pas dans le JSON. Il faut choisir un
+seul contrat (cookie ou corps de requete) et l'utiliser de facon coherente.
+
+En production, utiliser HTTPS, une cle JWT aleatoire stockee dans une
+variable d'environnement, et secure=True pour les cookies. Configurer aussi
+les origines CORS de facon restrictive.
+
+
+9. AJOUTER UNE MIGRATION DE BASE DE DONNEES
+-------------------------------------------
+
+Modifier un modele Python ne modifie pas automatiquement la base existante.
+Apres une modification de modele :
+
+    alembic revision --autogenerate -m "description du changement"
+    alembic upgrade head
+
+Examiner le fichier de migration genere avant de l'appliquer. Verifier que
+env.py importe le modele concerne afin qu'Alembic le voie. Ne pas supprimer
+une base de donnees pour contourner une migration incorrecte ; corriger ou
+creer une migration adaptee aux donnees existantes.
+
+
+10. TESTER UNE FONCTIONNALITE
+-----------------------------
+
+Pour chaque route, verifier au minimum :
+
+1) Cas nominal : donnees valides et reponse attendue.
+2) Entree invalide : champs absents, mauvais type ou valeur vide.
+3) Ressource absente : la route renvoie 404.
+4) Doublon : l'API renvoie 409 au lieu d'une erreur 500.
+5) Sans connexion : route protegee refusee avec 401.
+6) Acces interdit : un utilisateur ne peut pas modifier la ressource d'un
+   autre utilisateur.
+
+Quand une requete echoue, lire toute la trace du serveur. La derniere ligne
+donne souvent le type d'exception et sa cause. Distinguer une erreur 422
+de validation, une erreur SQLAlchemy/base (souvent 500), un 401
+d'authentification et un 409 de contrainte unique.
+
+
+11. EXERCICE : AJOUTER UNE API DE LIVRES
+----------------------------------------
+
+Refaire les memes etapes pour une ressource Livre :
+
+1) Definir les champs : id, titre, auteur, annee, disponible.
+2) Creer models/livre.py et la table livre.
+3) Creer schemas/livreCreation.py et schemas/livreSortie.py.
+4) Creer crud/livre.py avec creer, lister, obtenir par id, modifier et
+   supprimer.
+5) Creer routes /livres dans un routeur APIRouter.
+6) Inclure ce routeur dans main.py avec le prefixe /livres.
+7) Generer et examiner une migration Alembic, puis l'appliquer.
+8) Tester chaque route dans /docs, y compris les erreurs 404 et 422.
+9) Ajouter des tests automatises pour les cas nominaux et les erreurs.
+
+Avant de coder, dessiner le parcours :
+
+    POST /livres -> LivreCreation -> CRUD -> Modele Livre -> table livre
+    GET /livres  -> CRUD -> table livre -> LivreSortie -> JSON
+
+
+12. AMELIORATIONS A PREVOIR DANS CE PROJET
+------------------------------------------
+
+- Proteger aussi les routes de lecture, modification et suppression des
+  taches, et verifier leur proprietaire dans chaque operation.
+- Mettre les secrets et identifiants de base dans l'environnement.
+- Rendre le contrat du refresh token coherent avec les cookies.
+- Ajouter des tests automatises pour inscription, connexion et CRUD.
+- Utiliser des dates calculees au moment de la creation, plutot qu'une
+  valeur date.today() evaluee au chargement du module.
+- Eviter de renvoyer les details internes d'exceptions SQL dans les reponses
+  en production ; les journaliser cote serveur.
+
+
+METHODE A RETENIR
+-----------------
+
+Pour toute nouvelle fonctionnalite :
+
+    Besoin -> Modele -> Schema -> CRUD -> Route -> Migration -> Tests
+
+Garder chaque responsabilite dans son fichier rend l'API plus facile a
+comprendre, tester et faire evoluer.
